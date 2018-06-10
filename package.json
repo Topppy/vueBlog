@@ -1,0 +1,25 @@
+{
+  "name": "vueblog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "glist": "node ./docs/.vuepress/gList.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Topppy/vueBlog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Topppy/vueBlog/issues"
+  },
+  "homepage": "https://github.com/Topppy/vueBlog#readme",
+  "devDependencies": {
+    "vuepress": "^0.7.0"
+  }
+}

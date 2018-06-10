@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>学习redux之compose</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/1.styles.20fd6929.css" as="style"><link rel="preload" href="/assets/js/app.7d25ddbc.js" as="script"><link rel="preload" href="/assets/js/0.4b0c8958.js" as="script">
+    <link rel="stylesheet" href="/assets/css/1.styles.20fd6929.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-navbar no-sidebar"><!----><div class="sidebar-mask"></div><div class="sidebar"><!----><!----></div><div class="page"><div class="content"><h1 id="学习redux之compose"><a href="#学习redux之compose" aria-hidden="true" class="header-anchor">#</a> 学习redux之compose</h1><p>在3.7.1版本的compose中，代码更优美了，也更易于理解，源码如下，</p><pre class="language-text"><code>export default function compose(...funcs) {
+  if (funcs.length === 0) {
+    return arg =&gt; arg
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0]
+  }
+
+  return funcs.reduce((a, b) =&gt; (...args) =&gt; a(b(...args)))
+}
+</code></pre><p>很简洁的一个compose函数，两句边界条件的判断，只有一句是真正的功能代码。</p><p>首先<code>...funcs</code>是使用es6的rest参数，向compose传递的任意数量的参数都被放在数组funcs中。而接下来，使用了数组的方法<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce" target="_blank" rel="noopener noreferrer">reduce</a>，</p><blockquote><p>reduce() 方法对累加器和数组中的每个元素（从左到右）应用一个函数，将其减少为单个值</p></blockquote><p>这里，我一开始是迷惑的，reduce不是从左到右遍历的吗？而compose是要按照从右到左的顺序组合函数的啊  -&gt; <code>compose(f, g) = f(g(args))</code>，从左到右遍历如何实现从右到左的顺序组合函数的呢？</p><p><strong>别慌我们来慢慢捋一下：</strong></p><p>当funcs = [ f1, f2] 的时候，最终返回的结果是：(...args) =&gt; f1(f2(...args)。</p><p>当funcs = [ f1, f2, f3] 的时候，
+首次执行reducer
+a = f1, b = f2,
+分别用f1、f2 替换a、b得到</p><pre class="language-text"><code>   (...args) =&gt; a(b(...args))    
+=  (...args) =&gt; f1(f2(...args))
+</code></pre><p>reducer执行第二次的时候，此时a为第一次执行reducer返回的结果
+a = (...args) =&gt; f1(f2(...args)， b = f3，
+我们依旧分别用(...args) =&gt; f1(f2(...args)、f3 替换a、b得到
+(...args) =&gt; a(b(...args))<br>
+=  (...args) =&gt; a(f3(...args)<br>
+=  (...args) =&gt; f1(f2(f3(...args)))</p><p>因此reducer执行第二次后返回的结果是(...args) =&gt;f1(f2(f3(...args))), 与我们期望的结果相符。</p><p>funcs.length &gt; 3 的时候依此类推。</p><blockquote><p>是不是很熟悉？像不像递归？</p></blockquote></div><!----><!----></div></div></div>
+    <script src="/assets/js/0.4b0c8958.js" defer></script><script src="/assets/js/app.7d25ddbc.js" defer></script>
+  </body>
+</html>
